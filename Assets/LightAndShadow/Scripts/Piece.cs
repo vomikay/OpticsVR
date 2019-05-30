@@ -6,46 +6,46 @@ using Valve.VR.InteractionSystem;
 [RequireComponent( typeof( Interactable ) )]
 public class Piece : MonoBehaviour
 {
-	public const float MOVEMENT_INCREMENT = 0.1f;
-
     [SerializeField] private TargetPiece targetPiece = default;
+
+	private const float MOVEMENT_INCREMENT = 0.1f;
     private Hand.AttachmentFlags attachmentFlags = Hand.defaultAttachmentFlags & ( ~Hand.AttachmentFlags.SnapOnAttach ) & (~Hand.AttachmentFlags.DetachOthers) & (~Hand.AttachmentFlags.VelocityMovement);
-    private Interactable interactable;
+    private Interactable interactable = default;
 
     public bool IsCorrect { get; private set; }
 
     private void Start()
     {
-        this.IsCorrect = false;
-        interactable = this.GetComponent<Interactable>();
+        IsCorrect = false;
+        interactable = GetComponent<Interactable>();
     }
 
     private void Update()
 	{
-		if (!this.IsCorrect)
+		if (!IsCorrect)
         {
-            this.CheckIsCorrect();
+            CheckIsCorrect();
         }
 	}
 
     private void CheckIsCorrect()
 	{
-        if (targetPiece.CheckIsCorrect(this.transform))
+        if (targetPiece.CheckIsCorrect(transform))
         {
-            this.IsCorrect = true;
+            IsCorrect = true;
             Debug.Log("Correct Piece");
-            StartCoroutine(this.LerpTowardTarget(targetPiece.transform));
+            StartCoroutine(LerpTowardTarget(targetPiece.transform));
         }
 	}
 
     private IEnumerator LerpTowardTarget(Transform targetTransform)
 	{
 		float t = 0f;
-		Vector3 startPosition = this.transform.position;
+		Vector3 startPosition = transform.position;
 
 		while (t < 1f)
 		{
-			this.transform.position = Vector3.Lerp(startPosition, targetTransform.position, t);
+			transform.position = Vector3.Lerp(startPosition, targetTransform.position, t);
 			t += Time.deltaTime;
 			yield return null;
 		}
@@ -54,18 +54,17 @@ public class Piece : MonoBehaviour
     private void HandHoverUpdate(Hand hand)
     {
         GrabTypes startingGrabType = hand.GetGrabStarting();
-        bool isGrabEnding = hand.IsGrabEnding(this.gameObject);
+        bool isGrabEnding = hand.IsGrabEnding(gameObject);
 
-        if (this.interactable.attachedToHand == null && startingGrabType != GrabTypes.None)
+        if (interactable.attachedToHand == null && startingGrabType != GrabTypes.None)
         {
-            hand.HoverLock(this.interactable);
-            hand.AttachObject(this.gameObject, startingGrabType, attachmentFlags);
+            hand.HoverLock(interactable);
+            hand.AttachObject(gameObject, startingGrabType, attachmentFlags);
         }
         else if (isGrabEnding)
         {
-            hand.DetachObject(this.gameObject);
-            hand.HoverUnlock(this.interactable);
+            hand.DetachObject(gameObject);
+            hand.HoverUnlock(interactable);
         }
     }
-
 }

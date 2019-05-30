@@ -10,7 +10,7 @@ public class TargetPiece : MonoBehaviour
 
     public bool CheckIsCorrect(Transform pieceTransform)
 	{
-		float distance = Vector3.Distance(this.transform.position, pieceTransform.position);
-		return ((distance * DISTANCE_COEFFICIENT) < this.positionTolerance);
+		float distance = Vector3.Distance(transform.position, pieceTransform.position);
+		return ((distance * DISTANCE_COEFFICIENT) < positionTolerance);
 	}
 }
